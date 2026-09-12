@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="360" viewBox="0 0 1200 360"
+     role="img" aria-labelledby="title desc">
+  <title id="title">vexgo-default-theme — VexGo official default theme</title>
+  <desc id="desc">VexGo default SSR blog theme: 7 Go-template pages, friends shortcode and comments widget.</desc>
+
+  <rect width="1200" height="360" rx="26" fill="#000000"/>
+  <rect x="1" y="1" width="1198" height="358" rx="25" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+
+  <!-- left: title block -->
+  <g id="title-block" transform="translate(64 52)">
+    <text x="0" y="0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif" font-size="20" font-weight="600" fill="#FFFFFF" letter-spacing="3">VEXGO OFFICIAL THEME</text>
+    <text x="0" y="68" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif" font-size="54" font-weight="800" fill="#FFFFFF">vexgo-default-theme</text>
+    <text x="0" y="110" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" fill="#FFFFFF">Production-ready SSR blog: home, post, user, pages,</text>
+    <text x="0" y="142" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" fill="#FFFFFF">timeline, links, dark mode, EN+ZH i18n included.</text>
+    <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="18" fill="#FFFFFF">
+      <rect x="0" y="166" width="520" height="44" rx="10" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+      <text x="16" y="194">7 templates  ·  i18n en/zh  ·  comments widget</text>
+    </g>
+    <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="18">
+      <rect x="0" y="218" width="250" height="38" rx="19" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+      <text x="24" y="243" fill="#FFFFFF">SSR · Go template</text>
+      <rect x="262" y="218" width="210" height="38" rx="19" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+      <text x="286" y="243" fill="#FFFFFF">Tailwind CSS</text>
+    </g>
+  </g>
+
+  <!-- right: proof — post template fields + friends shortcode syntax -->
+  <g id="project-proof" transform="translate(736 40)">
+    <!-- post card: real template bindings, no invented metrics -->
+    <rect x="0" y="0" width="400" height="164" rx="14" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+    <rect x="20" y="20" width="170" height="26" rx="7" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+    <text x="32" y="38" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" fill="#FFFFFF">{{.Category}}</text>
+    <text x="20" y="74" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif" font-size="24" font-weight="700" fill="#FFFFFF">{{.Title}}</text>
+    <text x="20" y="102" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" fill="#FFFFFF">{{.Excerpt}}</text>
+    <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" fill="#FFFFFF">
+      <circle cx="30" cy="130" r="10" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+      <text x="48" y="136">{{.LikesCount}}</text>
+      <text x="228" y="136">comments.js</text>
+    </g>
+
+    <!-- friends shortcode: real syntax, renders .vexgo-friends -->
+    <rect x="0" y="180" width="400" height="100" rx="14" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+    <text x="20" y="212" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" fill="#FFFFFF">```friends</text>
+    <text x="20" y="240" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" fill="#FFFFFF">name | url | avatar | desc</text>
+    <text x="20" y="264" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" fill="#FFFFFF">```  →  .vexgo-friends</text>
+  </g>
+</svg>
