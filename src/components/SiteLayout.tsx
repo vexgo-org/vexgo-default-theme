@@ -98,9 +98,9 @@ export function SiteHeader() {
             <div
               id="vexgo-auth"
               className="flex items-center gap-2"
-              data-login={go('t "auth.login"')}
-              data-register={go('t "auth.register"')}
-              data-profile={go('t "auth.profile"')}
+              data-login-label={go('t "auth.login"')}
+              data-register-label={go('t "auth.register"')}
+              data-profile-label={go('t "auth.profile"')}
             >
               <a
                 href="/admin/login"
@@ -120,7 +120,7 @@ export function SiteHeader() {
       </div>
       <script>
         {
-          "(function(){var h=document.getElementById('vexgo-auth');if(!h||!localStorage.getItem('token'))return;var login=h.getAttribute('data-login')||'Login';var register=h.getAttribute('data-register')||'Register';var profile=h.getAttribute('data-profile')||'Profile';var a=document.createElement('a');a.href='/admin/profile';a.className='inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2';a.textContent=profile;h.textContent='';h.appendChild(a);void login;void register;})();"
+          "(function(){var h=document.getElementById('vexgo-auth');if(!h||!localStorage.getItem('token'))return;var login=h.getAttribute('data-login-label')||'Login';var register=h.getAttribute('data-register-label')||'Register';var profile=h.getAttribute('data-profile-label')||'Profile';var a=document.createElement('a');a.href='/admin/profile';a.className='inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2';a.textContent=profile;h.textContent='';h.appendChild(a);void login;void register;})();"
         }
       </script>
     </header>
