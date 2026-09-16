@@ -7,6 +7,7 @@
   "auth.register": "Register",
   "auth.profile": "Profile",
   "a11y.themeToggle": "Toggle dark mode",
+  "a11y.languageMenu": "Switch language",
   "footer.rights": "All rights reserved.",
   "posts.emptyTitle": "No posts found",
   "posts.emptySearch": "Try different keywords or clear the search.",

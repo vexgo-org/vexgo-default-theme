@@ -1,5 +1,5 @@
 import { go } from "../lib/go";
-import { Moon, Search, Sun } from "./icons";
+import { Check, Globe, Moon, Search, Sun } from "./icons";
 
 /** ThemeToggle renders a dark/light switch for the public pages.
  *
@@ -28,6 +28,63 @@ export function ThemeToggle() {
         }
       </script>
     </>
+  );
+}
+
+/** LanguageSwitcher renders an icon dropdown for zh/en switching.
+ *
+ * Public pages are server-side rendered with no client framework, so this is
+ * a plain button + menu wired by the inline vanilla-JS handler below:
+ * - the globe button toggles the menu (closes on outside click / Escape)
+ * - the active language is detected from `<html lang>` and marked with a check
+ * - clicking an option preserves existing query params and only sets `lang`
+ * - the raw `href="?lang=.."` remains as a no-JS fallback
+ */
+export function LanguageSwitcher() {
+  return (
+    <div id="vexgo-lang" className="relative">
+      <button
+        id="vexgo-lang-toggle"
+        type="button"
+        aria-label={go('t "a11y.languageMenu"')}
+        title={go('t "a11y.languageMenu"')}
+        aria-haspopup="menu"
+        aria-expanded="false"
+        className="inline-flex items-center justify-center rounded-md h-9 w-9 text-sm font-medium transition-colors hover:bg-secondary hover:text-foreground text-muted-foreground"
+      >
+        <Globe className="w-4 h-4" />
+      </button>
+      <div
+        id="vexgo-lang-menu"
+        role="menu"
+        hidden
+        className="absolute right-0 top-full z-50 mt-2 w-36 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+      >
+        <a
+          href="?lang=zh"
+          role="menuitem"
+          data-lang="zh"
+          className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <span>中文</span>
+          <Check className="w-4 h-4" data-check="zh" />
+        </a>
+        <a
+          href="?lang=en"
+          role="menuitem"
+          data-lang="en"
+          className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <span>English</span>
+          <Check className="w-4 h-4" data-check="en" />
+        </a>
+      </div>
+      <script>
+        {
+          "(function(){var r=document.getElementById('vexgo-lang');var b=document.getElementById('vexgo-lang-toggle');var m=document.getElementById('vexgo-lang-menu');if(!r||!b||!m)return;function set(o){m.hidden=!o;b.setAttribute('aria-expanded',o?'true':'false')}var c=(document.documentElement.lang||'zh').toLowerCase();var zh=c.indexOf('zh')===0;m.querySelectorAll('[data-check]').forEach(function(e){var w=e.getAttribute('data-check')==='zh';e.style.visibility=(w===zh)?'visible':'hidden'});b.addEventListener('click',function(e){e.stopPropagation();set(m.hidden)});document.addEventListener('click',function(e){if(!r.contains(e.target))set(false)});document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});m.querySelectorAll('a[data-lang]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var l=a.getAttribute('data-lang');try{var u=new URL(window.location.href);u.searchParams.set('lang',l);window.location.href=u.toString()}catch(err){window.location.href='?lang='+l}})})})();"
+        }
+      </script>
+    </div>
   );
 }
 
@@ -86,15 +143,7 @@ export function SiteHeader() {
               exists (the SPA stores its session in localStorage). */}
           <div className="flex items-center gap-1">
             <ThemeToggle />
-            <span className="flex items-center gap-1 text-sm text-muted-foreground">
-              <a href="?lang=zh" className="px-1 hover:text-foreground">
-                中文
-              </a>
-              <span aria-hidden="true">/</span>
-              <a href="?lang=en" className="px-1 hover:text-foreground">
-                EN
-              </a>
-            </span>
+            <LanguageSwitcher />
             <div
               id="vexgo-auth"
               className="flex items-center gap-2"
