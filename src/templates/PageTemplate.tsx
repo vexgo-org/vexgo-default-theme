@@ -1,3 +1,4 @@
+import { HighlightScripts } from "../components/CodeHighlight";
 import { SiteFooter, SiteHeader, DocHead } from "../components/SiteLayout";
 import { go } from "../lib/go";
 import { ArrowLeft, Calendar } from "../components/icons";
@@ -9,6 +10,7 @@ export function PageTemplate() {
       <DocHead
         title={go('printf "%s - %s" .Page.Title .Site.Name')}
         description={go(".Page.Title")}
+        highlightCode
       />
       <body className="min-h-screen bg-background text-foreground antialiased">
         <SiteHeader />
@@ -34,6 +36,7 @@ export function PageTemplate() {
           </div>
         </main>
         <SiteFooter />
+        <HighlightScripts />
       </body>
     </html>
   );

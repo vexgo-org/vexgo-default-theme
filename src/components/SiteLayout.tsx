@@ -1,4 +1,5 @@
 import { go } from "../lib/go";
+import { HighlightStyles } from "./CodeHighlight";
 import { Check, Globe, Moon, Search, Sun } from "./icons";
 
 /** ThemeToggle renders a dark/light switch for the public pages.
@@ -7,7 +8,9 @@ import { Check, Globe, Moon, Search, Sun } from "./icons";
  * a plain button wired by the inline vanilla-JS handler below. It shares the
  * admin SPA's localStorage `theme` key (light | dark | system, defaulting to
  * light) so the preference carries over to /admin. The two icons swap via
- * Tailwind's `dark:` variant — the moon shows in light mode, the sun in dark.
+ * Tailwind's `dark:` variant — the moon shows in light mode, the sun in dark —
+ * and on pages that load highlight.js the handler also swaps the code theme
+ * through the vexgoApplyHljsTheme helper (see DocHead).
  */
 export function ThemeToggle() {
   return (
@@ -24,7 +27,7 @@ export function ThemeToggle() {
       </button>
       <script>
         {
-          "(function(){var b=document.getElementById('vexgo-theme-toggle');if(!b)return;b.addEventListener('click',function(){var r=document.documentElement;var d=!r.classList.contains('dark');r.classList.remove('light','dark');r.classList.add(d?'dark':'light');r.style.colorScheme=d?'dark':'light';try{localStorage.setItem('theme',d?'dark':'light')}catch(e){}});})();"
+          "(function(){var b=document.getElementById('vexgo-theme-toggle');if(!b)return;b.addEventListener('click',function(){var r=document.documentElement;var d=!r.classList.contains('dark');r.classList.remove('light','dark');r.classList.add(d?'dark':'light');r.style.colorScheme=d?'dark':'light';if(window.vexgoApplyHljsTheme)window.vexgoApplyHljsTheme(d);try{localStorage.setItem('theme',d?'dark':'light')}catch(e){}});})();"
         }
       </script>
     </>
@@ -219,13 +222,32 @@ export function SiteFooter() {
   );
 }
 
-/** DocHead renders the shared <head> metadata with per-page title/description. */
+/** Head bootstrap script: applies the stored light/dark preference to <html>
+ * before first paint, so the page never flashes the wrong theme. */
+const THEME_BOOTSTRAP =
+  "(function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(d?'dark':'light');r.style.colorScheme=d?'dark':'light';}catch(e){}})();";
+
+/** Head bootstrap for pages that load highlight.js: same theme resolution, plus
+ * vexgoApplyHljsTheme — the helper ThemeToggle calls — which disables whichever
+ * of the two code stylesheets does not match. Running it here keeps the swap
+ * before first paint, so switching light/dark later is instant and flash-free. */
+const THEME_BOOTSTRAP_HIGHLIGHT =
+  "(function(){function a(d){var l=document.querySelectorAll('link[data-hljs-theme]');for(var i=0;i<l.length;i++){l[i].disabled=(l[i].getAttribute('data-hljs-theme')==='dark')!==d}}window.vexgoApplyHljsTheme=a;var d=false;try{var t=localStorage.getItem('theme');d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches)}catch(e){}var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(d?'dark':'light');r.style.colorScheme=d?'dark':'light';a(d)})();";
+
+/** DocHead renders the shared <head> metadata with per-page title/description.
+ *
+ * Pass `highlightCode` on the templates whose content can contain code blocks
+ * (post, page, timeline, links): it adds the highlight.js stylesheets and the
+ * bootstrap that keeps them in step with the light/dark toggle. Pages that pass
+ * nothing load exactly what they did before. */
 export function DocHead({
   title,
   description,
+  highlightCode = false,
 }: {
   title: string;
   description: string;
+  highlightCode?: boolean;
 }) {
   return (
     <head>
@@ -235,10 +257,9 @@ export function DocHead({
       <meta name="description" content={description} />
       <link rel="icon" href="/favicon.ico" />
       <link rel="stylesheet" href="/theme-assets/style.css" />
+      {highlightCode ? <HighlightStyles /> : null}
       <script>
-        {
-          "(function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(d?'dark':'light');r.style.colorScheme=d?'dark':'light';}catch(e){}})();"
-        }
+        {highlightCode ? THEME_BOOTSTRAP_HIGHLIGHT : THEME_BOOTSTRAP}
       </script>
     </head>
   );

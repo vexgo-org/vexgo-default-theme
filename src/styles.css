@@ -96,12 +96,22 @@
         @apply bg-muted px-1 py-0.5 rounded text-sm font-mono text-foreground;
     }
 
+    /* Code blocks: the container carries the frame (background, padding,
+       radius, scroll) from the site tokens so it follows light/dark, while the
+       highlight.js CDN theme supplies only the token colors. The last rule
+       cancels the frame highlight.js ships with its themes —
+       `.hljs { background }` and `pre code.hljs { padding }` — which would
+       otherwise paint its own background and double the padding. */
     .prose pre {
-        @apply bg-gray-900 text-white p-4 rounded-lg overflow-x-auto my-4;
+        @apply bg-muted text-foreground p-4 rounded-lg overflow-x-auto my-4;
     }
 
     .prose pre code {
-        @apply bg-transparent text-white p-0;
+        @apply bg-transparent text-foreground p-0;
+    }
+
+    .prose pre code.hljs {
+        @apply bg-transparent p-0;
     }
 
     .prose img {
