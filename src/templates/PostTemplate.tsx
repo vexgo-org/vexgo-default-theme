@@ -1,3 +1,4 @@
+import { HighlightScripts } from "../components/CodeHighlight";
 import { SiteFooter, SiteHeader, DocHead } from "../components/SiteLayout";
 import { go } from "../lib/go";
 import {
@@ -22,6 +23,7 @@ export function PostTemplate() {
       <DocHead
         title={go('printf "%s - %s" .Post.Title .Site.Name')}
         description={go(".Post.Excerpt")}
+        highlightCode
       />
       <body className="min-h-screen bg-background text-foreground antialiased">
         <SiteHeader />
@@ -170,6 +172,7 @@ export function PostTemplate() {
           </div>
         </main>
         <SiteFooter /> <script src="/theme-assets/comments.js" defer></script>
+        <HighlightScripts />
       </body>
     </html>
   );
