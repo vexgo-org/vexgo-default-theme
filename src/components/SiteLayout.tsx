@@ -233,6 +233,7 @@ export function DocHead({
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>{title}</title>
       <meta name="description" content={description} />
+      <link rel="icon" href="/favicon.ico" />
       <link rel="stylesheet" href="/theme-assets/style.css" />
       <script>
         {
