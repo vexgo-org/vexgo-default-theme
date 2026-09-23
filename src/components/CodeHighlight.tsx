@@ -1,5 +1,7 @@
 import type { ReactElement } from "react";
 
+import { go } from "../lib/go";
+
 /**
  * highlight.js assets for the public code blocks, loaded from the cdnjs CDN.
  *
@@ -72,6 +74,58 @@ export function HighlightStyles(): ReactElement {
 }
 
 /**
+ * Runs once the document is parsed, in the order that guarantees highlight.js
+ * (deferred, so it runs before DOMContentLoaded) is already loaded. It
+ * highlights every code block, then wraps each one in a container with a bar
+ * holding the language name and a copy button.
+ *
+ * The language comes from the class highlight.js resolved — it rewrites the
+ * element to `hljs language-<lang>`, including for auto-detected blocks — and
+ * falls back to the author's own fence label when highlight.js does not know
+ * the language and skips the block entirely.
+ *
+ * The bar is presentation only: with JavaScript off the page still shows the
+ * same code, just without it. Labels are read from #vexgo-code-labels; the
+ * copy itself uses the async clipboard API and falls back to a hidden textarea
+ * + execCommand for plain-HTTP deployments, where the clipboard API is not
+ * available outside a secure context.
+ */
+const HIGHLIGHT_INIT = `(function(){
+  function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
+  document.addEventListener('DOMContentLoaded',function(){
+    if(window.hljs)window.hljs.highlightAll();
+    var holder=document.getElementById('vexgo-code-labels');
+    function attr(name,fallback){return (holder&&holder.getAttribute('data-'+name))||fallback}
+    var copyLabel=attr('copy-label','Copy'),copiedLabel=attr('copied-label','Copied'),copyAria=attr('copy-aria','Copy code');
+    function wire(btn,text,status,code){
+      var timer;
+      function done(){text.textContent=copiedLabel;btn.setAttribute('data-copied','');status.textContent=copiedLabel;clearTimeout(timer);timer=setTimeout(function(){text.textContent=copyLabel;btn.removeAttribute('data-copied');status.textContent=''},1600)}
+      function fallback(value){var ta=el('textarea');ta.value=value;ta.style.position='fixed';ta.style.top='-1000px';document.body.appendChild(ta);ta.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(ta);if(ok)done()}
+      btn.addEventListener('click',function(){var value=code.textContent||'';if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(done,function(){fallback(value)})}else{fallback(value)}})
+    }
+    var blocks=document.querySelectorAll('.prose pre > code');
+    for(var i=0;i<blocks.length;i++){
+      var code=blocks[i],pre=code.parentNode;
+      var match=/(?:^|\\s)language-([\\w+#.-]+)/.exec(code.className||'');
+      var lang=match?match[1]:((code.result&&code.result.language)||'');
+      var btn=el('button','vexgo-code-copy'),text=el('span','vexgo-code-copy-text',copyLabel),status=el('span','vexgo-code-status');
+      btn.type='button';btn.setAttribute('aria-label',copyAria);
+      status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+      btn.appendChild(text);
+      var bar=el('div','vexgo-code-bar',null);
+      bar.appendChild(el('span','vexgo-code-lang',lang));
+      bar.appendChild(btn);
+      bar.appendChild(status);
+      var wrap=el('div','vexgo-code',null);
+      pre.parentNode.insertBefore(wrap,pre);
+      wrap.appendChild(bar);
+      wrap.appendChild(pre);
+      wire(btn,text,status,code)
+    }
+  })
+})();`;
+
+/**
  * HighlightScripts loads highlight.js at the end of the body and highlights
  * every `<pre><code>` block: goldmark supplies the language as a
  * `language-<lang>` class, and unlabelled blocks are auto-detected by
@@ -79,21 +133,28 @@ export function HighlightStyles(): ReactElement {
  * the time DOMContentLoaded fires, which is when the inline call runs; a
  * blocked or failed CDN simply leaves the code uncolored, still readable
  * through the theme's own `.prose pre` styling.
+ *
+ * The hidden label holder next to it carries the copy button's strings from
+ * the theme's i18n dictionary, so the inline script itself stays free of
+ * hardcoded text and follows whatever language the page resolved.
  */
 export function HighlightScripts(): ReactElement {
   return (
     <>
+      <div
+        id="vexgo-code-labels"
+        hidden
+        data-copy-label={go('t "code.copy"')}
+        data-copied-label={go('t "code.copied"')}
+        data-copy-aria={go('t "a11y.copyCode"')}
+      ></div>
       <script
         src={HLJS_JS_URL}
         integrity={HLJS_JS_INTEGRITY}
         crossOrigin="anonymous"
         defer
       ></script>
-      <script>
-        {
-          "window.addEventListener('DOMContentLoaded',function(){if(window.hljs)window.hljs.highlightAll()});"
-        }
-      </script>
+      <script>{HIGHLIGHT_INIT}</script>
     </>
   );
 }
